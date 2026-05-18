@@ -379,6 +379,46 @@
 
   .btn-cta:hover { background: var(--deep); }
 
+  /* email form inside CTA */
+  .cta-form { margin-top: 0; }
+  .cta-form-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .cta-input {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--cream);
+    padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .cta-input::placeholder { color: var(--sand); opacity: 0.7; }
+  .cta-input:focus { border-color: var(--terra); }
+  .cta-msg {
+    margin-top: 14px;
+    font-size: 13px;
+    min-height: 20px;
+    transition: opacity 0.3s;
+  }
+  .cta-msg.success { color: #a8d5a2; }
+  .cta-msg.error { color: #e8a0a0; }
+
+  /* intro inputs (light bg) */
+  .intro-input {
+    background: white !important;
+    border: 1.5px solid var(--sand) !important;
+    color: var(--ink) !important;
+  }
+  .intro-input::placeholder { color: var(--soft) !important; opacity: 1 !important; }
+  .intro-input:focus { border-color: var(--terra) !important; }
+  #intro-msg { color: var(--terra); font-size: 13px; margin-top: 10px; }
+
   .btn-restart {
     display: inline-block;
     margin-top: 24px;
@@ -436,14 +476,16 @@
   }
   .score-meta span { font-size: 12px; color: var(--soft); line-height: 1.5; }
 
-  /* hide */
-  .hidden { display: none !important; }
+  /* screens */
+  .screen { display: none; }
+  .screen.active { display: block; }
+  #intro.active { display: flex; flex-direction: column; justify-content: center; }
 </style>
 </head>
 <body>
 
 <!-- ══ INTRO ══ -->
-<div id="intro">
+<div id="intro" class="screen active">
   <div class="container">
     <div class="logo">Melissa Petit</div>
     <div class="intro-label">Test de décodage émotionnel</div>
@@ -452,15 +494,22 @@
     <p class="intro-body">
       Nous fonctionnons tous à partir de stratégies émotionnelles invisibles — construites dans l'enfance pour nous protéger, et qui aujourd'hui limitent notre expansion. Ce test en 7 questions révèle votre mécanisme dominant.
     </p>
-    <button class="btn-start" onclick="startQuiz()">
-      Commencer le test <span class="arrow">→</span>
-    </button>
-    <p class="intro-meta">7 questions · 3 minutes · Résultat immédiat</p>
+    <div class="cta-form" style="margin-bottom:16px;">
+      <div class="cta-form-row" style="flex-direction:column;gap:12px;">
+        <input class="cta-input intro-input" id="intro-prenom" type="text" placeholder="Votre prénom" />
+        <input class="cta-input intro-input" id="intro-email" type="email" placeholder="Votre email" />
+        <button class="btn-start" onclick="captureAndStart()">
+          Commencer le test <span class="arrow">→</span>
+        </button>
+      </div>
+      <div class="cta-msg" id="intro-msg"></div>
+    </div>
+    <p class="intro-meta">7 questions · 3 minutes · Résultat immédiat · 100% gratuit</p>
   </div>
 </div>
 
 <!-- ══ QUIZ ══ -->
-<div id="quiz">
+<div id="quiz" class="screen">
   <div class="container">
     <div class="progress-bar-wrap">
       <div class="progress-meta">
@@ -479,7 +528,7 @@
 </div>
 
 <!-- ══ RESULT ══ -->
-<div id="result">
+<div id="result" class="screen">
   <div class="container" id="result-content"></div>
 </div>
 
@@ -600,10 +649,36 @@ const results = {
 let currentQ = 0;
 let answers = [];
 let selected = null;
+let userPrenom = '';
+let userEmail = '';
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function captureAndStart() {
+  const prenom = document.getElementById('intro-prenom').value.trim();
+  const email = document.getElementById('intro-email').value.trim();
+  const msg = document.getElementById('intro-msg');
+
+  if (!prenom) { msg.textContent = 'Merci d\'indiquer votre prénom.'; return; }
+  if (!email || !email.includes('@')) { msg.textContent = 'Merci d\'indiquer un email valide.'; return; }
+
+  userPrenom = prenom;
+  userEmail = email;
+  msg.textContent = '';
+
+  // Envoyer à Brevo immédiatement (sans attendre pour ne pas bloquer)
+  registerContact(prenom, email, null);
+
+  showScreen('quiz');
+  renderQuestion();
+}
 
 function startQuiz() {
-  document.getElementById('intro').style.display = 'none';
-  document.getElementById('quiz').style.display = 'block';
+  showScreen('quiz');
   renderQuestion();
 }
 
@@ -656,9 +731,7 @@ function nextQuestion() {
 }
 
 function showResult() {
-  document.getElementById('quiz').style.display = 'none';
-  const resultEl = document.getElementById('result');
-  resultEl.style.display = 'block';
+  showScreen('result');
 
   // Tally
   const counts = { C: 0, R: 0, E: 0, M: 0 };
@@ -709,22 +782,77 @@ function showResult() {
     <div class="cta-block">
       <h3>Et si on allait plus loin ensemble ?</h3>
       <p>Ce test révèle votre mécanisme dominant — mais derrière, il y a une histoire, un système nerveux, des schémas à décoder. C'est exactement ce sur quoi je travaille en accompagnement.</p>
-      <a class="btn-cta" href="#">Découvrir l'accompagnement →</a>
+      <a class="btn-cta" href="mailto:melissa.homeostasie@gmail.com">Prendre contact avec Melissa →</a>
     </div>
 
     <button class="btn-restart" onclick="restart()">Recommencer le test</button>
   `;
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Mettre à jour le contact Brevo avec son profil maintenant qu'on le connaît
+  registerContact(userPrenom, userEmail, { profileKey: winner, profileTitle: r.title, profileSubtitle: r.subtitle, traits: r.traits, invitation: r.invitation });
+}
+
+// ── BREVO CONFIG ──────────────────────────────────────────────
+const BREVO_API_KEY = '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';
+// ──────────────────────────────────────────────────────────────
+
+async function registerContact(prenom, email, profile) {
+  try {
+    // 1. Créer / mettre à jour le contact dans Brevo
+    const attributes = { PRENOM: prenom };
+    if (profile) {
+      attributes.PROFIL_TEST = profile.profileTitle;
+      attributes.PROFIL_SOUS_TITRE = profile.profileSubtitle;
+      attributes.PROFIL_TRAITS = profile.traits.join(', ');
+      attributes.PROFIL_INVITATION = profile.invitation;
+    }
+
+    await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': BREVO_API_KEY },
+      body: JSON.stringify({ email, attributes, updateEnabled: true })
+    });
+
+    // 2. Notifier Melissa seulement quand on a le profil complet
+    if (profile) {
+      const r = results[profile.profileKey];
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': BREVO_API_KEY },
+        body: JSON.stringify({
+          sender: { name: 'Test Mécanismes', email: 'melissa.homeostasie@gmail.com' },
+          to: [{ email: 'melissa.homeostasie@gmail.com', name: 'Melissa Petit' }],
+          replyTo: { email, name: prenom },
+          subject: `Nouveau résultat — ${profile.profileTitle} — ${prenom}`,
+          htmlContent: `
+            <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:40px 20px;color:#2C1F18;background:#F5F0E8;">
+              <p style="font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#B08968;">Nouveau résultat de test</p>
+              <h1 style="font-size:28px;font-weight:300;margin:16px 0 4px;">${profile.profileTitle}</h1>
+              <p style="font-style:italic;color:#B08968;margin-bottom:32px;">${profile.profileSubtitle}</p>
+              <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+                <tr><td style="padding:10px 0;border-bottom:1px solid #EDE5D4;font-size:13px;color:#8B7355;width:120px;">Prénom</td><td style="padding:10px 0;border-bottom:1px solid #EDE5D4;font-size:14px;"><strong>${prenom}</strong></td></tr>
+                <tr><td style="padding:10px 0;border-bottom:1px solid #EDE5D4;font-size:13px;color:#8B7355;">Email</td><td style="padding:10px 0;border-bottom:1px solid #EDE5D4;font-size:14px;"><a href="mailto:${email}" style="color:#B08968;">${email}</a></td></tr>
+                <tr><td style="padding:10px 0;font-size:13px;color:#8B7355;">Traits</td><td style="padding:10px 0;font-size:14px;">${profile.traits.join(' · ')}</td></tr>
+              </table>
+              <div style="border-left:3px solid #B08968;padding:20px 24px;background:white;margin-bottom:24px;">
+                ${r.description.map(p => `<p style="font-size:14px;line-height:1.8;margin-bottom:12px;">${p}</p>`).join('')}
+              </div>
+              <p style="font-size:13px;color:#8B7355;font-style:italic;">"${profile.invitation}"</p>
+            </div>
+          `
+        })
+      });
+    }
+  } catch(e) {
+    console.warn('Brevo error:', e);
+  }
 }
 
 function restart() {
   currentQ = 0;
   answers = [];
   selected = null;
-  document.getElementById('result').style.display = 'none';
-  document.getElementById('intro').style.display = 'flex';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showScreen('intro');
 }
 </script>
 </body>
