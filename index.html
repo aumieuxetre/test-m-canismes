@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quel mécanisme inconscient dirige votre vie ? — Melissa Petit</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --cream: #F5F0E8;
+    --warm: #EDE5D4;
+    --sand: #D4C5A9;
+    --terra: #B08968;
+    --deep: #6B4C3B;
+    --ink: #2C1F18;
+    --soft: #8B7355;
+    --blush: #E8D5C4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(176,137,104,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(107,76,59,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 0;
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 64px;
+  }
+
+  .intro-label {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 6vw, 58px);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--terra);
+  }
+
+  .intro-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--soft);
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    padding: 18px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-start:hover {
+    background: var(--deep);
+    transform: translateY(-2px);
+  }
+
+  .btn-start .arrow {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .btn-start:hover .arrow { transform: translateX(4px); }
+
+  .intro-meta {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--sand);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── DECORATIVE LINE ── */
+  .deco-line {
+    width: 48px;
+    height: 1px;
+    background: var(--terra);
+    margin-bottom: 32px;
+    opacity: 0.6;
+  }
+
+  /* ── QUIZ SCREEN ── */
+  #quiz { display: none; padding: 48px 0 80px; }
+
+  .progress-bar-wrap {
+    margin-bottom: 48px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin-bottom: 10px;
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--sand);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--terra);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .question-block {
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 20px;
+  }
+
+  .q-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 40px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px;
+    background: white;
+    border: 1.5px solid var(--warm);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+  }
+
+  .option:hover {
+    border-color: var(--terra);
+    background: var(--blush);
+    transform: translateX(4px);
+  }
+
+  .option.selected {
+    border-color: var(--deep);
+    background: var(--warm);
+  }
+
+  .opt-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--terra);
+    min-width: 20px;
+    padding-top: 1px;
+  }
+
+  .opt-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .btn-next {
+    margin-top: 36px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: 1.5px solid var(--ink);
+    color: var(--ink);
+    padding: 15px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .btn-next.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .btn-next:hover {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  /* ── RESULT SCREEN ── */
+  #result { display: none; padding: 60px 0 80px; animation: fadeUp 0.6s ease forwards; }
+
+  .result-label {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 16px;
+  }
+
+  .result-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .result-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--terra);
+    margin-bottom: 40px;
+  }
+
+  .result-card {
+    background: white;
+    border-left: 3px solid var(--terra);
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+
+  .result-card p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .result-card p:last-child { margin-bottom: 0; }
+
+  .result-section-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin-bottom: 16px;
+    margin-top: 32px;
+  }
+
+  .traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .trait-tag {
+    background: var(--warm);
+    color: var(--deep);
+    padding: 6px 14px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .cta-block {
+    background: var(--ink);
+    padding: 40px;
+    margin-top: 40px;
+  }
+
+  .cta-block h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 12px;
+  }
+
+  .cta-block p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--sand);
+    margin-bottom: 28px;
+  }
+
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--terra);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+  }
+
+  .btn-cta:hover { background: var(--deep); }
+
+  .btn-restart {
+    display: inline-block;
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--soft);
+    text-decoration: underline;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    background: none;
+    border: none;
+  }
+
+  .btn-restart:hover { color: var(--terra); }
+
+  /* ── SCORE RING ── */
+  .score-ring-wrap {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 40px;
+    padding: 24px;
+    background: var(--warm);
+  }
+
+  .score-ring {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+  }
+
+  .score-ring svg {
+    transform: rotate(-90deg);
+  }
+
+  .score-ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--terra);
+  }
+
+  .score-meta { flex: 1; }
+  .score-meta strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .score-meta span { font-size: 12px; color: var(--soft); line-height: 1.5; }
+
+  /* hide */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ══ INTRO ══ -->
+<div id="intro">
+  <div class="container">
+    <div class="logo">Melissa Petit</div>
+    <div class="intro-label">Test de décodage émotionnel</div>
+    <div class="deco-line"></div>
+    <h1>Quel mécanisme inconscient <em>dirige</em> votre vie ?</h1>
+    <p class="intro-body">
+      Nous fonctionnons tous à partir de stratégies émotionnelles invisibles — construites dans l'enfance pour nous protéger, et qui aujourd'hui limitent notre expansion. Ce test en 7 questions révèle votre mécanisme dominant.
+    </p>
+    <button class="btn-start" onclick="startQuiz()">
+      Commencer le test <span class="arrow">→</span>
+    </button>
+    <p class="intro-meta">7 questions · 3 minutes · Résultat immédiat</p>
+  </div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz">
+  <div class="container">
+    <div class="progress-bar-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">Question 1 / 7</span>
+        <span id="prog-pct">14%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:14%"></div>
+      </div>
+    </div>
+    <div id="question-area"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">
+      Continuer <span>→</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="result">
+  <div class="container" id="result-content"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "Face à un conflit ou une tension, quelle est votre première réaction instinctive ?",
+    options: [
+      { text: "Je cherche immédiatement à désamorcer, à rassurer — même si c'est moi qui souffre.", type: "C" },
+      { text: "Je prends du recul, j'analyse, je me coupe un peu de ce que je ressens.", type: "R" },
+      { text: "Je me replie, je disparais intérieurement en attendant que ça passe.", type: "E" },
+      { text: "Je gère, je contrôle, je veux régler le problème vite.", type: "M" }
+    ]
+  },
+  {
+    text: "Quand quelqu'un que vous aimez semble déçu ou distant, que se passe-t-il en vous ?",
+    options: [
+      { text: "Une angoisse sourde — je dois comprendre ce qui s'est passé et réparer.", type: "C" },
+      { text: "Je me demande si j'ai fait quelque chose de mal, je ruminent.", type: "R" },
+      { text: "Je minimise, je me dis que c'est pas grave — mais ça reste.", type: "E" },
+      { text: "Je deviens plus efficace, je compense en faisant plus, en produisant.", type: "M" }
+    ]
+  },
+  {
+    text: "Comment vous sentez-vous quand vous recevez une aide sincère ou un compliment profond ?",
+    options: [
+      { text: "Touché·e mais mal à l'aise — je préfère être celui/celle qui donne.", type: "C" },
+      { text: "Je minimise : 'oh ce n'est rien', je dévie rapidement.", type: "R" },
+      { text: "Une émotion forte monte, puis je me referme presque aussitôt.", type: "E" },
+      { text: "Je reçois, mais j'ai besoin que ce soit mérité — sinon ça ne 'compte' pas.", type: "M" }
+    ]
+  },
+  {
+    text: "Dans votre rapport au travail ou à vos projets, qu'est-ce qui vous ressemble le plus ?",
+    options: [
+      { text: "Je m'investis souvent pour les autres davantage que pour moi.", type: "C" },
+      { text: "Je réfléchis beaucoup avant d'agir — parfois trop.", type: "R" },
+      { text: "J'ai des périodes d'élan fort puis d'effondrement intérieur.", type: "E" },
+      { text: "Je dois être irréprochable — la moindre erreur me pèse.", type: "M" }
+    ]
+  },
+  {
+    text: "Quelle phrase vous touche le plus profondément ?",
+    options: [
+      { text: "'Tu en fais toujours trop pour les autres.'", type: "C" },
+      { text: "'Tu penses trop — tu vis pas assez.'", type: "R" },
+      { text: "'Tu disparais quand ça devient intense.'", type: "E" },
+      { text: "'Tu ne t'autorises pas à ne pas être parfait·e.'", type: "M" }
+    ]
+  },
+  {
+    text: "Quel est le besoin le plus difficile à exprimer pour vous ?",
+    options: [
+      { text: "Avoir besoin d'aide ou de soutien.", type: "C" },
+      { text: "Exprimer une émotion brute, sans l'expliquer.", type: "R" },
+      { text: "Rester présent·e quand c'est trop intense.", type: "E" },
+      { text: "Accepter que ce soit 'bien' même si c'est imparfait.", type: "M" }
+    ]
+  },
+  {
+    text: "Quelle sensation vous accompagne le plus souvent, même en fond ?",
+    options: [
+      { text: "Une fatigue de donner, d'être là, de porter.", type: "C" },
+      { text: "Une distance avec vos propres émotions.", type: "R" },
+      { text: "Une peur diffuse que ça s'effondre ou que vous soyez 'trop'.", type: "E" },
+      { text: "Une pression intérieure à faire, à valoir, à mériter.", type: "M" }
+    ]
+  }
+];
+
+const results = {
+  C: {
+    title: "Le Porteur",
+    subtitle: "Vous vous êtes construit·e pour être indispensable.",
+    icon: "◈",
+    description: [
+      "Votre mécanisme dominant est la sur-présence pour les autres. Très tôt, vous avez appris que votre valeur dépendait de votre capacité à donner, à soutenir, à porter. Ce schéma vous a permis d'être aimé·e — mais au prix de vous oublier.",
+      "Aujourd'hui, vous ressentez une fatigue profonde que vous avez du mal à nommer. Vous portez — les émotions des autres, leurs problèmes, leurs besoins — parfois bien avant les vôtres. Et quand quelqu'un vous propose de l'aide, quelque chose résiste."
+    ],
+    traits: ["Sur-don", "Fatigue émotionnelle", "Difficulté à recevoir", "Loyauté inconsciente", "Peur d'être un fardeau"],
+    invitation: "La question n'est pas de moins donner. C'est d'apprendre à exister pour vous-même, pas seulement pour les autres."
+  },
+  R: {
+    title: "Le Rationaliseur",
+    subtitle: "Vous avez appris à comprendre plutôt qu'à ressentir.",
+    icon: "◇",
+    description: [
+      "Votre mécanisme dominant est l'intellectualisation émotionnelle. Face à ce qui est intense, votre système nerveux a trouvé une solution élégante : penser, analyser, comprendre. Ce mécanisme vous protège efficacement — parfois trop.",
+      "Vous êtes souvent décrit·e comme quelqu'un de posé, lucide, réfléchi. Mais derrière cette clarté mentale, il y a des émotions qui attendent d'être vécues — pas expliquées."
+    ],
+    traits: ["Intellectualisation", "Distance émotionnelle", "Besoin de comprendre", "Rumination", "Difficulté à 'juste ressentir'"],
+    invitation: "Vous avez tout compris mentalement. La prochaine étape, c'est de descendre dans le corps — là où les vraies transformations se font."
+  },
+  E: {
+    title: "L'Évitant Sensible",
+    subtitle: "Vous ressentez énormément — et vous appris à vous protéger de vous-même.",
+    icon: "◉",
+    description: [
+      "Votre mécanisme dominant est la rétraction protectrice. Vous êtes d'une sensibilité intense — vous captiez tout, ressentez tout, absorbiez tout. Et à un moment, votre système nerveux a décidé que c'était trop dangereux de rester aussi ouvert.",
+      "Aujourd'hui, vous avez des cycles : des élans forts, puis des retraits. Une présence vibrante, puis une disparition intérieure. Ce n'est pas de la faiblesse — c'est un système nerveux qui fait son travail. Mais il est peut-être temps de le reconfigurer."
+    ],
+    traits: ["Hypersensibilité", "Cycles présence/retrait", "Peur d'être 'trop'", "Surcharge sensorielle", "Protection par l'effacement"],
+    invitation: "Votre sensibilité n'est pas un défaut à corriger. C'est une intelligence émotionnelle brute qui attend d'être canalisée, pas contenue."
+  },
+  M: {
+    title: "Le Méritant",
+    subtitle: "Vous avez grandi avec l'idée que votre place était conditionnelle.",
+    icon: "◆",
+    description: [
+      "Votre mécanisme dominant est la légitimation par la performance. Quelque part dans votre histoire, vous avez intégré que l'amour, la reconnaissance, la place — ça se mérite. Alors vous avez commencé à faire plus, à être parfait·e, à ne jamais décevoir.",
+      "Ce mécanisme vous a souvent rendu·e efficace et fiable. Mais il crée aussi une pression intérieure constante, une difficulté à vous reposer sans culpabilité, et une voix intérieure qui n'est jamais tout à fait satisfaite."
+    ],
+    traits: ["Perfectionnisme", "Peur de décevoir", "Place conditionnelle", "Exigence envers soi", "Culpabilité au repos"],
+    invitation: "Vous n'avez pas à mériter votre place. Vous l'avez déjà. Le travail, c'est d'y croire — et de laisser tomber la performance comme seul langage d'amour."
+  }
+};
+
+let currentQ = 0;
+let answers = [];
+let selected = null;
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  selected = null;
+  const q = questions[currentQ];
+  const letters = ['A','B','C','D'];
+  const pct = Math.round(((currentQ + 1) / questions.length) * 100);
+
+  document.getElementById('prog-label').textContent = `Question ${currentQ + 1} / ${questions.length}`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  document.getElementById('question-area').innerHTML = `
+    <div class="question-block">
+      <div class="q-number">Question ${String(currentQ + 1).padStart(2,'0')}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">
+        ${q.options.map((o, i) => `
+          <div class="option" data-type="${o.type}" onclick="selectOption(this, '${o.type}')">
+            <span class="opt-letter">${letters[i]}</span>
+            <span class="opt-text">${o.text}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  const btn = document.getElementById('btn-next');
+  btn.classList.remove('visible');
+  btn.textContent = currentQ === questions.length - 1 ? 'Voir mon résultat →' : 'Continuer →';
+}
+
+function selectOption(el, type) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selected = type;
+  document.getElementById('btn-next').classList.add('visible');
+}
+
+function nextQuestion() {
+  if (!selected) return;
+  answers.push(selected);
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  const resultEl = document.getElementById('result');
+  resultEl.style.display = 'block';
+
+  // Tally
+  const counts = { C: 0, R: 0, E: 0, M: 0 };
+  answers.forEach(a => counts[a]++);
+  const winner = Object.entries(counts).sort((a,b) => b[1]-a[1])[0][0];
+  const r = results[winner];
+  const score = Math.round((counts[winner] / questions.length) * 100);
+
+  // Circumference for ring
+  const radius = 28;
+  const circ = 2 * Math.PI * radius;
+  const dash = (score / 100) * circ;
+
+  document.getElementById('result-content').innerHTML = `
+    <div class="result-label">Votre résultat</div>
+    <div class="result-title">${r.icon} ${r.title}</div>
+    <div class="result-subtitle">${r.subtitle}</div>
+
+    <div class="score-ring-wrap">
+      <div class="score-ring">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="${radius}" fill="none" stroke="#EDE5D4" stroke-width="3"/>
+          <circle cx="36" cy="36" r="${radius}" fill="none" stroke="#B08968" stroke-width="3"
+            stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-label">${score}%</div>
+      </div>
+      <div class="score-meta">
+        <strong>Dominance du mécanisme</strong>
+        <span>Ce mécanisme oriente la majorité de vos réponses comportementales et émotionnelles.</span>
+      </div>
+    </div>
+
+    <div class="result-card">
+      ${r.description.map(p => `<p>${p}</p>`).join('')}
+    </div>
+
+    <div class="result-section-title">Ce que vous vivez souvent</div>
+    <div class="traits">
+      ${r.traits.map(t => `<span class="trait-tag">${t}</span>`).join('')}
+    </div>
+
+    <div class="result-section-title">L'invitation</div>
+    <div class="result-card">
+      <p><em>"${r.invitation}"</em></p>
+    </div>
+
+    <div class="cta-block">
+      <h3>Et si on allait plus loin ensemble ?</h3>
+      <p>Ce test révèle votre mécanisme dominant — mais derrière, il y a une histoire, un système nerveux, des schémas à décoder. C'est exactement ce sur quoi je travaille en accompagnement.</p>
+      <a class="btn-cta" href="#">Découvrir l'accompagnement →</a>
+    </div>
+
+    <button class="btn-restart" onclick="restart()">Recommencer le test</button>
+  `;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+  currentQ = 0;
+  answers = [];
+  selected = null;
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('intro').style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
